@@ -1,20 +1,14 @@
-
 """
 DQN for Unity ML-Agents Environments using PyTorch
 Includes examples of the following DQN training algorithms:
-  -> Vanilla DNQ, 
+  -> Vanilla DNQ,
   -> Double-DQN (DDQN)
 
 The example uses a modified version of the Unity ML-Agents Banana Collection Example Environment.
 The environment includes a single agent, who can turn left or right and move forward or backward.
 The agent's task is to collect yellow bananas (reward of +1) that are scattered around an square
 game area, while avoiding purple bananas (reward of -1). For the version of Bananas employed here,
-the environment is considered solved when the average score over the last 100 episodes > 13. 
-
-Example Developed By:
-Michael Richardson, 2018
-Project for Udacity Danaodgree in Deep Reinforcement Learning (DRL)
-Code Expanded and Adapted from Code provided by Udacity DRL Team, 2018.
+the environment is considered solved when the average score over the last 100 episodes > 13.
 """
 
 ###################################
@@ -45,14 +39,14 @@ epsilon=1.0
 epsilon_min=0.05
 epsilon_decay=0.99
 scores = []
-scores_average_window = 100      
-solved_score = 14                 
+scores_average_window = 100
+solved_score = 14
 
 
 """
 ###################################
 STEP 2: Start the Unity Environment
-# Use the corresponding call depending on your operating system 
+# Use the corresponding call depending on your operating system
 """
 env = UnityEnvironment(file_name="Banana.app")
 # - **Mac**: "Banana.app"
@@ -65,13 +59,13 @@ env = UnityEnvironment(file_name="Banana.app")
 
 """
 #######################################
-STEP 3: Get The Unity Environment Brian
-Unity ML-Agent applications or Environments contain "BRAINS" which are responsible for deciding 
-the actions an agent or set of agents should take given a current set of environment (state) 
-observations. The Banana environment has a single Brian, thus, we just need to access the first brain 
+STEP 3: Get The Unity Environment BRAIN
+Unity ML-Agent applications or Environments contain "BRAINS" which are responsible for deciding
+the actions an agent or set of agents should take given a current set of environment (state)
+observations. The Banana environment has a single Brain, thus, we just need to access the first brain
 available (i.e., the default brain). We then set the default brain as the brain that will be controlled.
 """
-# Get the default brain 
+# Get the default brain
 brain_name = env.brain_names[0]
 
 # Assign the default brain as the brain to be controlled
@@ -81,18 +75,18 @@ brain = env.brains[brain_name]
 """
 #############################################
 STEP 4: Determine the size of the Action and State Spaces
-# 
-# The simulation contains a single agent that navigates a large environment.  
+#
+# The simulation contains a single agent that navigates a large environment.
 # At each time step, it can perform four possible actions:
-# - `0` - walk forward 
+# - `0` - walk forward
 # - `1` - walk backward
 # - `2` - turn left
 # - `3` - turn right
-# 
-# The state space has `37` dimensions and contains the agent's velocity, 
-# along with ray-based perception of objects around agent's forward direction.  
-# A reward of `+1` is provided for collecting a yellow banana, and a reward of 
-# `-1` is provided for collecting a purple banana. 
+#
+# The state space has `37` dimensions and contains the agent's velocity,
+# along with ray-based perception of objects around agent's forward direction.
+# A reward of `+1` is provided for collecting a yellow banana, and a reward of
+# `-1` is provided for collecting a purple banana.
 """
 
 # Set the number of actions or action size
@@ -122,7 +116,7 @@ The network is defined in model.py. The input is a real (float) value vector of 
 (NOTE: not appropriate for pixel data). It is a dense, fully connected neural network,
 with 2 x 128 node hidden layers. The network can be modified by changing model.py.
 
-Here we initialize an agent using the Unity environments state and action size determined above 
+Here we initialize an agent using the Unity environments state and action size determined above
 and the default DQN hyperparameter settings.
 """
 agent = Agent(state_size=state_size, action_size=action_size, dqn_type='DQN')
@@ -131,24 +125,24 @@ agent = Agent(state_size=state_size, action_size=action_size, dqn_type='DQN')
 """
 ###################################
 STEP 6: Run the DQN Training Sequence
-The DQN RL Training Process involves the agent learning from repeated episodes of behaviour 
+The DQN RL Training Process involves the agent learning from repeated episodes of behaviour
 to map states to actions the maximize rewards received via environmental interaction.
-The artificial neural network is expected to converge on or approximate the optimal function 
-that maps states to actions. 
+The artificial neural network is expected to converge on or approximate the optimal function
+that maps states to actions.
 
 The agent training process involves the following:
 (1) Reset the environment at the beginning of each episode.
 (2) Obtain (observe) current state, s, of the environment at time t
-(3) Use an epsilon-greedy policy to perform an action, a(t), in the environment 
+(3) Use an epsilon-greedy policy to perform an action, a(t), in the environment
     given s(t), where the greedy action policy is specified by the neural network.
-(4) Observe the result of the action in terms of the reward received and 
+(4) Observe the result of the action in terms of the reward received and
 	the state of the environment at time t+1 (i.e., s(t+1))
 (5) Calculate the error between the actual and expected Q value for s(t),a(t),r(t) and s(t+1)
 	to update the neural network weights.
 (6) Update episode score (total reward received) and set s(t) -> s(t+1).
 (7) If episode is done, break and repeat from (1), otherwise repeat from (3).
 
-Below we also exit the training process early if the environment is solved. 
+Below we also exit the training process early if the environment is solved.
 That is, if the average score for the previous 100 episodes is greater than solved_score.
 """
 
@@ -156,9 +150,9 @@ That is, if the average score for the previous 100 episodes is greater than solv
 for i_episode in range(1, num_episodes+1):
 
     # reset the unity environment at the beginning of each episode
-    env_info = env.reset(train_mode=True)[brain_name]     
+    env_info = env.reset(train_mode=True)[brain_name]
 
-    # get initial state of the unity environment 
+    # get initial state of the unity environment
     state = env_info.vector_observations[0]
 
     # set the initial episode score to zero.
@@ -168,13 +162,13 @@ for i_episode in range(1, num_episodes+1):
     # At each loop step take an epsilon-greedy action as a function of the current state observations
     # Based on the resultant environmental state (next_state) and reward received update the Agent network
     # If environment episode is done, exit loop...
-    # Otherwise repeat until done == true 
+    # Otherwise repeat until done == true
     while True:
         # determine epsilon-greedy action from current sate
-        action = agent.act(state, epsilon)             
+        action = agent.act(state, epsilon)
 
         # send the action to the environment and receive resultant environment information
-        env_info = env.step(action)[brain_name]        
+        env_info = env.step(action)[brain_name]
 
         next_state = env_info.vector_observations[0]   # get the next state
         reward = env_info.rewards[0]                   # get the reward
@@ -189,13 +183,13 @@ for i_episode in range(1, num_episodes+1):
         # Update episode score
         score += reward
 
-        # If unity indicates that episode is done, 
+        # If unity indicates that episode is done,
         # then exit episode loop, to begin new episode
         if done:
             break
 
     # Add episode score to Scores and...
-    # Calculate mean score over last 100 episodes 
+    # Calculate mean score over last 100 episodes
     # Mean score is calculated over current episodes until i_episode > 100
     scores.append(score)
     average_score = np.mean(scores[i_episode-min(i_episode,scores_average_window):i_episode+1])
@@ -210,8 +204,8 @@ for i_episode in range(1, num_episodes+1):
     # Print average score every scores_average_window episodes
     if i_episode % scores_average_window == 0:
         print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, average_score))
-    
-    # Check to see if the task is solved (i.e,. avearge_score > solved_score). 
+
+    # Check to see if the task is solved (i.e,. avearge_score > solved_score).
     # If yes, save the network weights and scores and end training.
     if average_score >= solved_score:
         print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(i_episode, average_score))
@@ -234,4 +228,3 @@ STEP 7: Everything is Finished -> Close the Environment.
 env.close()
 
 # END :) #############
-

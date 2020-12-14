@@ -1,10 +1,5 @@
 """
 DQN Agent for Vector Observation Learning
-
-Example Developed By:
-Michael Richardson, 2018
-Project for Udacity Danaodgree in Deep Reinforcement Learning (DRL)
-Code expanded and adapted from code examples provided by Udacity DRL Team, 2018.
 """
 
 # Import Required Packages
@@ -39,16 +34,16 @@ class Agent():
     """
     def __init__(self, state_size, action_size, dqn_type='DQN', replay_memory_size=1e5, batch_size=64, gamma=0.99,
     	learning_rate=1e-3, target_tau=2e-3, update_rate=4, seed=0):
-        
+
         """
         DQN Agent Parameters
-        ====== 
+        ======
             state_size (int): dimension of each state
             action_size (int): dimension of each action
             dqn_type (string): can be either 'DQN' for vanillia dqn learning (default) or 'DDQN' for double-DQN.
             replay_memory size (int): size of the replay memory buffer (typically 5e4 to 5e6)
             batch_size (int): size of the memory batch used for model updates (typically 32, 64 or 128)
-            gamma (float): paramete for setting the discoun ted value of future rewards (typically .95 to .995)
+            gamma (float): parameter for setting the discounted value of future rewards (typically .95 to .995)
             learning_rate (float): specifies the rate of model learing (typically 1e-4 to 1e-3))
             seed (int): random seed for initializing training point.
         """
@@ -87,7 +82,7 @@ class Agent():
     def step(self, state, action, reward, next_state, done):
         # Save experience in replay memory
         self.memory.add(state, action, reward, next_state, done)
-        
+
         # Learn every UPDATE_EVERY time steps.
         self.t_step = (self.t_step + 1) % self.update_rate
         if self.t_step == 0:
@@ -102,7 +97,7 @@ class Agent():
     #
     def act(self, state, eps=0.0):
         """Returns actions for given state as per current policy.
-        
+
         Params
         ======
             state (array_like): current state
@@ -125,11 +120,11 @@ class Agent():
     # LEARN() method
     # Update value parameters using given batch of experience tuples.
     def learn(self, experiences, gamma, DQN=True):
-        
+
         """
         Params
         ======
-            experiences (Tuple[torch.Variable]): tuple of (s, a, r, s', done) tuples 
+            experiences (Tuple[torch.Variable]): tuple of (s, a, r, s', done) tuples
             gamma (float): discount factor
         """
 
@@ -150,12 +145,12 @@ class Agent():
         #************************
             # Get max Q values for (s',a') from target model
             Qsa_prime_target_values = self.target_network(next_states).detach()
-            Qsa_prime_targets = Qsa_prime_target_values.max(1)[0].unsqueeze(1)        
+            Qsa_prime_targets = Qsa_prime_target_values.max(1)[0].unsqueeze(1)
 
-        
-        # Compute Q targets for current states 
+
+        # Compute Q targets for current states
         Qsa_targets = rewards + (gamma * Qsa_prime_targets * (1 - dones))
-        
+
         # Compute loss (error)
         loss = F.mse_loss(Qsa, Qsa_targets)
 
@@ -179,7 +174,7 @@ class Agent():
         ======
             local_model (PyTorch model): weights will be copied from
             target_model (PyTorch model): weights will be copied to
-            tau (float): interpolation parameter 
+            tau (float): interpolation parameter
         """
         for target_param, local_param in zip(target_model.parameters(), local_model.parameters()):
             target_param.data.copy_(tau*local_param.data + (1.0-tau)*target_param.data)
